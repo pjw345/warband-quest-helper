@@ -1,0 +1,10 @@
+## Interface: 11200
+## Title: Warband Quest Helper
+## Notes: Compact PlayerBots quest and inventory action buttons for use alongside Warband.
+## Author: pjw345
+## Version: 1.0.0
+## DefaultState: Enabled
+## LoadOnDemand: 0
+## SavedVariables: WarbandQuestHelperDB
+
+WarbandQuestHelper.lua

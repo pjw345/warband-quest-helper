@@ -1,0 +1,7 @@
+WTF/
+SavedVariables/
+Logs/
+*.log
+*.bak
+.DS_Store
+Thumbs.db
