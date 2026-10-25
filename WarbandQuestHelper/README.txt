@@ -28,7 +28,7 @@ Accept      /p do accept all quests
 Turn In     /p do talk to quest giver
 Equip       /p do equip upgrades
 Use Object  /p u go
-Sell Junk   /p s vendor
+Sell Junk   /p s gray (grey-quality items only)
 
 The addon automatically uses raid chat instead of party chat when you are in
 a raid. For quest-giver actions, stand near the NPC and target it first. For

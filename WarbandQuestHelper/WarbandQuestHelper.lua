@@ -147,8 +147,8 @@ CreateCommandButton(
 CreateCommandButton(
     "SellJunk",
     "Sell Junk",
-    "s vendor",
-    "Sell items classified for sale to a nearby vendor (/p s vendor)",
+    "s gray",
+    "Sell grey-quality junk only; keeps equipment, supplies and crafting materials (/p s gray)",
     126,
     -61,
     108
