@@ -5,7 +5,9 @@ local M = WarbandQuestHelperResources
 local token, nextPoll, nextDraw = math.mod(math.floor(GetTime() * 1000), 1000000000) + 1, 0, 0
 local signature = ""
 local resourceKinds = { O = true, H = true }
-local dotTexture = "Interface\\AddOns\\pfQuest\\img\\node"
+-- The client's own resource-tracking sprite (first cell in its 4x4 atlas).
+-- Referencing the native path preserves the active client MPQ's appearance.
+local dotTexture = "Interface\\Minimap\\ObjectIcons"
 
 local function Split(text, delimiter)
   local result, start = {}, 1
@@ -165,8 +167,10 @@ function M.Draw()
       if not M.pins[count] then
         local pin = CreateFrame("Frame", nil, Minimap)
         pin:SetWidth(10); pin:SetHeight(10); pin:SetFrameLevel(Minimap:GetFrameLevel() + 5)
-        pin.texture = pin:CreateTexture(nil, "ARTWORK"); pin.texture:SetAllPoints(pin)
-        pin.texture:SetTexture(dotTexture); pin.texture:SetVertexColor(1, 1, 0, 1)
+        pin.texture = pin:CreateTexture(nil, "ARTWORK")
+        pin.texture:SetWidth(8); pin.texture:SetHeight(8); pin.texture:SetPoint("CENTER", pin, "CENTER", 0, 0)
+        pin.texture:SetTexture(dotTexture); pin.texture:SetTexCoord(0, 0.25, 0, 0.25)
+        pin.texture:SetVertexColor(1, 1, 1, 1) -- Preserve native artwork colours; do not tint a generic dot.
         pin:EnableMouse(true)
         pin:SetScript("OnEnter", function() M.hovered = this; M.ShowTooltip(this) end)
         pin:SetScript("OnLeave", function() M.HideTooltip(this) end)

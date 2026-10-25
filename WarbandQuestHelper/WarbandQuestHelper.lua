@@ -3,7 +3,7 @@
 -- PlayerBots party commands used alongside the Warband addon.
 
 local ADDON_NAME = "Warband Quest Helper"
-local VERSION = "1.2.1"
+local VERSION = "1.2.2"
 local PANEL_WIDTH = 246
 local PANEL_HEIGHT = 123
 

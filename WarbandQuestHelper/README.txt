@@ -57,3 +57,11 @@ An unknown object shows its resource category and object ID rather than inventin
 a name. Native minimap clicks still work; dots do not command bots to gather.
 Hovered markers stay stable during redraws and tooltip cleanup follows node
 depletion, expiry, zoning and Resources Off. No server rebuild is required.
+
+### Standard WoW resource blip (1.2.2)
+
+Markers use the built-in Interface/Minimap/ObjectIcons resource-tracking sprite,
+cropped to the first atlas cell, with its original colours/border. This replaces
+the generic pfQuest node tinted yellow. The active client MPQ supplies the exact
+artwork. The helper still provides the shared profession feed and named hover;
+this does not activate native tracking spells or modify player tracking state.

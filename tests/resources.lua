@@ -23,7 +23,10 @@ function CreateFrame()
   function f:SetFrameLevel() end
   function f:CreateTexture()
     return { SetAllPoints = function() end, SetTexture = function(self, value) self.value = value end,
-      SetVertexColor = function(self,r,g,b,a) self.vertex={r,g,b,a} end }
+      SetVertexColor = function(self,r,g,b,a) self.vertex={r,g,b,a} end,
+      SetTexCoord = function(self,l,r,t,b) self.coords={l,r,t,b} end,
+      SetWidth = function(self,v) self.width=v end, SetHeight = function(self,v) self.height=v end,
+      SetPoint = function() end }
   end
   function f:ClearAllPoints() end
   function f:SetPoint(a,b,c,x,y) self.x, self.y = x,y end
@@ -66,10 +69,12 @@ M.Draw(); assert(M.pins[1].shown and M.pins[2].shown)
 local foundEast = false
 for _, pin in ipairs(M.pins) do if pin.x > 0 and pin.y == 0 then foundEast=true end end
 assert(foundEast, "ore east of player must draw to the right")
--- Yellow dot artwork and localized hover names, without repeated hover flicker.
+-- Native resource blip artwork and localized hover names, without repeated hover flicker.
 for _, pin in ipairs(M.pins) do
-  assert(pin.mouseEnabled and string.find(pin.texture.value, "pfQuest", 1, true))
-  assert(pin.texture.vertex[1]==1 and pin.texture.vertex[2]==1 and pin.texture.vertex[3]==0)
+  assert(pin.mouseEnabled and pin.texture.value=="Interface\\Minimap\\ObjectIcons")
+  assert(pin.texture.coords[1]==0 and pin.texture.coords[2]==0.25 and pin.texture.coords[3]==0 and pin.texture.coords[4]==0.25)
+  assert(pin.texture.width==8 and pin.texture.height==8)
+  assert(pin.texture.vertex[1]==1 and pin.texture.vertex[2]==1 and pin.texture.vertex[3]==1)
 end
 local hovered=M.pins[1];this=hovered;hovered.scripts.OnEnter()
 assert(GameTooltip.shown and GameTooltip.text==M.ResourceName(hovered.row))
@@ -119,7 +124,7 @@ roster={"Alon","Mercy"}; now=23; assert(table.getn(M.VisibleNodes(38))==0, "stal
 WarbandQuestHelperDB.resourceMarkers="off"; M.Poll(); assert(not next(M.snapshots) and not next(M.wanted))
 WarbandQuestHelperDB.resourceMarkers="both"; pfMap=nil; M.Poll(); assert(not next(M.wanted), "no requests without rendering support")
 WarbandQuestHelperDB.resourceMarkers = {}; assert(M.Mode()=="on", "invalid saved setting uses safe default")
-print("PASS: Lua 5.0 resources, yellow dots, hover names/stability/cleanup, native clicks and map isolation")
+print("PASS: Lua 5.0 resources, native resource blips, hover names/stability/cleanup, native clicks and map isolation")
 
 WarbandQuestHelperDB = { x = 123, hidden = true }
 assert(M.SetMode("on") and M.Mode()=="on")
