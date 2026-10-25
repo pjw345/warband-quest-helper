@@ -1,4 +1,4 @@
-Warband Quest Helper 1.1.1
+Warband Quest Helper 1.2.0
 ==========================
 
 A small Turtle WoW / Vanilla addon designed to be used alongside Warband.
@@ -41,3 +41,10 @@ Requires pfQuest and the matching server resource feed. Icons do not start gathe
 The separate Bot Resource Icons addon should be removed/disabled when using this version.
 
 On shows every supported resource type available from current harvesting skills; no per-type selection is required.
+
+The 1.2.0 feed includes your own trained Mining/Herbalism as well as controlled
+group bots. With Resources On, both supported resource types appear whenever
+any contributor has enough skill. Your own snapshot also works solo/unguilded.
+This requires matching RESSELF server support; install the 1.2.0 package together
+with that server build. The currently deployed c6a892a8 supports only bot snapshots;
+the compatible 1.1.1 On/Off package can be used until that next build.

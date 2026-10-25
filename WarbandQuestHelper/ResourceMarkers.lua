@@ -56,7 +56,7 @@ function M.Receive(prefix, body, channel, sender)
   local part, total, zone = Integer(f[6], 16), Integer(f[7], 16), Integer(f[5], 4294967295)
   local roster = M.Roster()
   if not part or not total or part < 1 or total < 1 or part > total or not zone or
-      not roster[f[4]] or M.wanted[f[4]] ~= f[3] then return end
+      (f[4] ~= UnitName("player") and not roster[f[4]]) or M.wanted[f[4]] ~= f[3] then return end
   local p = M.pending[f[4]]
   if not p then p = { token = f[3], zone = zone, total = total, parts = {} }; M.pending[f[4]] = p end
   if p.token ~= f[3] or p.zone ~= zone or p.total ~= total then return end
@@ -92,18 +92,21 @@ function M.Poll()
   if M.Mode() == "off" or not M.Available() then M.Clear(); return end
   local roster, current = M.Roster()
   if current ~= signature then M.Clear(); signature = current end
-  if current == "" then return end
   token = math.mod(token, 4294967294) + 1
   local text = tostring(token)
   M.pending, M.wanted = {}, {}
-  for name in pairs(roster) do M.wanted[name] = text end
-  SendAddonMessage("RESBOT", "R:1:" .. text .. ":both", GetNumRaidMembers() > 0 and "RAID" or "PARTY")
+  M.wanted[UnitName("player")] = text
+  SendAddonMessage("RESSELF", "R:1:" .. text .. ":both", "GUILD")
+  if current ~= "" then
+    for name in pairs(roster) do M.wanted[name] = text end
+    SendAddonMessage("RESBOT", "R:1:" .. text .. ":both", GetNumRaidMembers() > 0 and "RAID" or "PARTY")
+  end
 end
 function M.VisibleNodes(zone)
   local result, seen = {}, {}
   local roster = M.Roster()
   for name, snapshot in pairs(M.snapshots) do
-    if not roster[name] or snapshot.expires <= GetTime() then M.snapshots[name] = nil
+    if (name ~= UnitName("player") and not roster[name]) or snapshot.expires <= GetTime() then M.snapshots[name] = nil
     elseif snapshot.zone == zone then
       for _, row in ipairs(snapshot.rows) do
         if not seen[row.guid] then

@@ -3,7 +3,7 @@
 -- PlayerBots party commands used alongside the Warband addon.
 
 local ADDON_NAME = "Warband Quest Helper"
-local VERSION = "1.1.1"
+local VERSION = "1.2.0"
 local PANEL_WIDTH = 246
 local PANEL_HEIGHT = 123
 
@@ -172,7 +172,7 @@ end)
 resourceButton:SetScript("OnEnter", function()
     GameTooltip:SetOwner(this, "ANCHOR_TOP")
     GameTooltip:SetText("Group resource icons")
-    GameTooltip:AddLine("Click to turn resource icons on or off. On shows all resource types covered by available harvesting skills. Requires pfQuest.", 1, 1, 1, true)
+    GameTooltip:AddLine("Click to turn resource icons on or off. On shows all nearby ore and herbs that you or your grouped bots have the profession and skill to harvest. Requires pfQuest.", 1, 1, 1, true)
     GameTooltip:Show()
 end)
 resourceButton:SetScript("OnLeave", function() GameTooltip:Hide() end)

@@ -39,7 +39,7 @@ local function wanted(name, token) M.wanted[name] = token end
 local function receive(body, sender, prefix) M.Receive(prefix or "RESBOT",body,"GUILD",sender or "Alin") end
 local row = "17370383791809394007,1731,O,51.000,50.000"
 local herb = "17370383791809394008,1617,H,50.000,51.000"
-M.Poll(); assert(table.getn(sent)==1 and sent[1][1]=="RESBOT" and sent[1][3]=="PARTY")
+M.Poll(); assert(table.getn(sent)==2 and sent[1][1]=="RESSELF" and sent[1][3]=="GUILD" and sent[2][1]=="RESBOT" and sent[2][3]=="PARTY")
 wanted("Alon","1")
 receive("S:1:1:Alon:38:1:2:"..row)
 assert(not M.snapshots.Alon, "partial snapshot must not appear")
@@ -85,3 +85,19 @@ WarbandQuestHelperDB = { x = 123, hidden = true }
 assert(M.SetMode("on") and M.Mode()=="on")
 assert(WarbandQuestHelperDB.x==123 and WarbandQuestHelperDB.hidden, "resource modes preserve panel settings")
 assert(not M.SetMode("invalid") and M.Mode()=="on")
+
+-- A new session with only the human still requests and displays its own skills.
+pfMap = { minimap_sizes = {}, minimap_zoom = {}, minimap_indoor = function()end,
+  GetMapIDByName = function() return 38 end }
+WarbandQuestHelperDB.resourceMarkers="on";roster={};sent={};M.Clear();M.Poll()
+assert(table.getn(sent)==1 and sent[1][1]=="RESSELF" and M.wanted.Alin)
+local selfToken=M.wanted.Alin
+receive("S:1:"..selfToken..":Alin:38:1:1:"..herb)
+assert(table.getn(M.VisibleNodes(38))==1,"human's herb is visible without a bot or group")
+roster={"Alon"};M.Poll();wanted("Alon","20");wanted("Alin","20")
+receive("S:1:20:Alon:38:1:1:"..row)
+receive("S:1:20:Alin:38:1:1:"..herb)
+assert(table.getn(M.VisibleNodes(38))==2,"one switch shows human herbs plus bot ore")
+roster={};assert(table.getn(M.VisibleNodes(38))==1,"human icons survive last bot leaving")
+M.SetMode("off");sent={};M.Poll();assert(table.getn(sent)==0 and not next(M.snapshots),"Off stops both feeds")
+print("PASS: own/party profession union, solo polling and unified On/Off")

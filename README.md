@@ -37,7 +37,7 @@ Do not commit the client's `WTF` directory, SavedVariables, logs or account info
 
 MIT; see [LICENSE](LICENSE).
 
-## Group resource minimap icons (1.1.1)
+## Group resource minimap icons (1.2.0)
 
 The helper now includes ore/herb icons from your controlled bots' professions and
 trained skill. The **Resources** button cycles On and Off. The
@@ -56,3 +56,10 @@ Restart the client after the manifest update. Lua5.0 tests use a fake WoW UI;
 actual game rendering and interaction require separate acceptance.
 
 On shows every supported resource type available from current harvesting skills; no per-type selection is required.
+
+The 1.2.0 feed includes your own trained Mining/Herbalism as well as controlled
+group bots. With Resources On, both supported resource types appear whenever
+any contributor has enough skill. Your own snapshot also works solo/unguilded.
+This requires matching RESSELF server support; install the 1.2.0 package together
+with that server build. The currently deployed c6a892a8 supports only bot snapshots;
+the compatible 1.1.1 On/Off package can be used until that next build.
