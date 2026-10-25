@@ -63,3 +63,12 @@ any contributor has enough skill. Your own snapshot also works solo/unguilded.
 This requires matching RESSELF server support; install the 1.2.0 package together
 with that server build. The currently deployed c6a892a8 supports only bot snapshots;
 the compatible 1.1.1 On/Off package can be used until that next build.
+
+### Yellow resource dots (1.2.1)
+
+Minimap resources use small yellow dots. Hover a dot to see the localized object
+name from the installed pfQuest/Turtle database, such as Copper Vein or Silverleaf.
+An unknown object shows its resource category and object ID rather than inventing
+a name. Native minimap clicks still work; dots do not command bots to gather.
+Hovered markers stay stable during redraws and tooltip cleanup follows node
+depletion, expiry, zoning and Resources Off. No server rebuild is required.
