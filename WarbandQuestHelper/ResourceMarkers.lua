@@ -41,7 +41,7 @@ end
 function M.HideTooltip(pin)
   if M.hovered ~= pin then return end
   M.hovered = nil
-  if GameTooltip and GameTooltip:GetOwner() == pin then GameTooltip:Hide() end
+  if GameTooltip and type(GameTooltip.IsOwned) == "function" and GameTooltip:IsOwned(pin) then GameTooltip:Hide() end
 end
 function M.ShowTooltip(pin)
   if not pin.row or not GameTooltip then return end

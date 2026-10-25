@@ -13,3 +13,8 @@ Yellow-dot tests also cover localized known names, honest unknown-object fallbac
 yellow tint, hover staying open across draws, recycled marker updates, clearing
 owned tooltips while preserving unrelated UI tooltips and forwarding native
 minimap clicks without bot commands. Artwork/hover still require in-game acceptance.
+
+Tooltip ownership compatibility (1.2.3): use the Vanilla GameTooltip:IsOwned
+method instead of GetOwner. The Lua5.0 fixture deliberately omits GetOwner,
+reproduces the original error, and covers clearing owned versus unrelated
+tooltips with the supported method. No server change is needed.

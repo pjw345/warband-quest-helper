@@ -80,3 +80,8 @@ cropped to the first atlas cell, with its original colours/border. This replaces
 the generic pfQuest node tinted yellow. The active client MPQ supplies the exact
 artwork. The helper still provides the shared profession feed and named hover;
 this does not activate native tracking spells or modify player tracking state.
+
+Tooltip ownership compatibility (1.2.3): use the Vanilla GameTooltip:IsOwned
+method instead of GetOwner. The Lua5.0 fixture deliberately omits GetOwner,
+reproduces the original error, and covers clearing owned versus unrelated
+tooltips with the supported method. No server change is needed.

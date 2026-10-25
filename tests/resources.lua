@@ -40,7 +40,8 @@ Minimap = { GetZoom = function() return 0 end, GetWidth = function() return 140 
 function Minimap:GetScript(name) return self[name] end
 GameTooltip = { hides = 0 }
 function GameTooltip:SetOwner(owner) self.owner = owner end
-function GameTooltip:GetOwner() return self.owner end
+function GameTooltip:IsOwned(owner) return self.owner == owner end
+assert(GameTooltip.GetOwner == nil, "Vanilla fixture must not provide unsupported GetOwner")
 function GameTooltip:SetText(text) self.text = text end
 function GameTooltip:Show() self.shown = true end
 function GameTooltip:Hide() self.shown = false; self.hides = self.hides + 1 end

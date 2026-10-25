@@ -2,7 +2,7 @@
 ## Title: Warband Quest Helper
 ## Notes: Compact PlayerBots quest and inventory action buttons for use alongside Warband.
 ## Author: pjw345
-## Version: 1.2.2
+## Version: 1.2.3
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
 ## SavedVariables: WarbandQuestHelperDB
