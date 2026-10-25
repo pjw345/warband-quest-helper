@@ -37,12 +37,12 @@ Do not commit the client's `WTF` directory, SavedVariables, logs or account info
 
 MIT; see [LICENSE](LICENSE).
 
-## Group resource minimap icons (1.1.0)
+## Group resource minimap icons (1.1.1)
 
 The helper now includes ore/herb icons from your controlled bots' professions and
-trained skill. The **Resources** button cycles Ore + Herbs, Ore, Herbs, Off. The
-same setting is available through `/wqh resources both|ore|herbs|off` and
-`/botresources both|ore|herbs|off`. Settings share WarbandQuestHelperDB without
+trained skill. The **Resources** button cycles On and Off. The
+same setting is available through `/wqh resources on|off` and
+`/botresources on|off`. Settings share WarbandQuestHelperDB without
 changing saved panel position or visibility. Hiding the panel leaves icons active;
 choose Off to stop icon polling. Icons do not trigger gathering.
 
@@ -54,3 +54,5 @@ alongside this version. Neither Warband itself nor its roster interface is chang
 
 Restart the client after the manifest update. Lua5.0 tests use a fake WoW UI;
 actual game rendering and interaction require separate acceptance.
+
+On shows every supported resource type available from current harvesting skills; no per-type selection is required.

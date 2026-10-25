@@ -46,20 +46,20 @@ event="VARIABLES_LOADED"
 frames.WarbandQuestHelperEventFrame.scripts.OnEvent()
 assert(panel.height==123 and panel.width==246)
 assert(panel.point[4]==123 and panel.point[5]==456 and panel.shown)
-assert(button.text=="Resources: Herbs")
-for _,expected in ipairs({"off","both","ore","herbs"}) do
+assert(button.text=="Resources: On")
+for _,expected in ipairs({"off","on"}) do
  button.scripts.OnClick(); assert(M.Mode()==expected)
 end
 assert(table.getn(commands)==0,"resource control must not issue gameplay commands")
-SlashCmdList.WARBANDQUESTHELPER("resources both")
-assert(button.text=="Resources: Ore + Herbs" and M.Mode()=="both")
+SlashCmdList.WARBANDQUESTHELPER("resources on")
+assert(button.text=="Resources: On" and M.Mode()=="on")
 SlashCmdList.WARBANDQUESTHELPER("resources invalid")
-assert(M.Mode()=="both" and panel.shown)
+assert(M.Mode()=="on" and panel.shown)
 local expected={Accept="do accept all quests",TurnIn="do talk to quest giver",Equip="do equip upgrades",UseObject="u go",SellJunk="s gray"}
 for name,text in pairs(expected) do
  frames["WarbandQuestHelper"..name.."Button"].scripts.OnClick()
  assert(commands[table.getn(commands)][1]==text and commands[table.getn(commands)][2]=="PARTY")
 end
-SlashCmdList.WARBANDQUESTHELPER("");assert(not panel.shown and M.Mode()=="both","panel hiding preserves icon mode")
-SlashCmdList.WARBANDQUESTHELPER("reset");assert(panel.shown and M.Mode()=="both" and not WarbandQuestHelperDB.hidden)
+SlashCmdList.WARBANDQUESTHELPER("");assert(not panel.shown and M.Mode()=="on","panel hiding preserves icon mode")
+SlashCmdList.WARBANDQUESTHELPER("reset");assert(panel.shown and M.Mode()=="on" and not WarbandQuestHelperDB.hidden)
 print("PASS: helper resource cycle/slash, saved position/visibility, independent icons and all existing command buttons")

@@ -27,8 +27,8 @@ local function Coordinate(text)
 end
 function M.Mode()
   local mode = WarbandQuestHelperDB and WarbandQuestHelperDB.resourceMarkers
-  if mode == "both" or mode == "ore" or mode == "herbs" or mode == "off" then return mode end
-  return "both"
+  if mode == "off" then return "off" end
+  return "on" -- Migrate all previous enabled modes to the combined display.
 end
 function M.Clear()
   M.snapshots, M.pending, M.wanted = {}, {}, {}
@@ -97,7 +97,7 @@ function M.Poll()
   local text = tostring(token)
   M.pending, M.wanted = {}, {}
   for name in pairs(roster) do M.wanted[name] = text end
-  SendAddonMessage("RESBOT", "R:1:" .. text .. ":" .. M.Mode(), GetNumRaidMembers() > 0 and "RAID" or "PARTY")
+  SendAddonMessage("RESBOT", "R:1:" .. text .. ":both", GetNumRaidMembers() > 0 and "RAID" or "PARTY")
 end
 function M.VisibleNodes(zone)
   local result, seen = {}, {}
@@ -106,8 +106,7 @@ function M.VisibleNodes(zone)
     if not roster[name] or snapshot.expires <= GetTime() then M.snapshots[name] = nil
     elseif snapshot.zone == zone then
       for _, row in ipairs(snapshot.rows) do
-        if not seen[row.guid] and (M.Mode() == "both" or M.Mode() == "ore" and row.kind == "O" or
-            M.Mode() == "herbs" and row.kind == "H") then
+        if not seen[row.guid] then
           seen[row.guid] = true; table.insert(result, row)
         end
       end
@@ -153,7 +152,7 @@ function M.Draw()
   end
 end
 function M.SetMode(mode)
-  if mode ~= "off" and mode ~= "both" and mode ~= "ore" and mode ~= "herbs" then return false end
+  if mode ~= "off" and mode ~= "on" then return false end
   WarbandQuestHelperDB = WarbandQuestHelperDB or {}
   WarbandQuestHelperDB.resourceMarkers = mode
   M.Clear(); nextPoll = GetTime() + 0.2
@@ -179,5 +178,5 @@ SLASH_WARBANDRESOURCES1 = "/botresources"
 SlashCmdList.WARBANDRESOURCES = function(text)
   text = string.lower(text or "")
   M.SetMode(text)
-  DEFAULT_CHAT_FRAME:AddMessage("Bot resource icons: " .. M.Mode() .. ". /botresources both|ore|herbs|off (requires matching server and pfQuest).")
+  DEFAULT_CHAT_FRAME:AddMessage("Bot resource icons: " .. M.Mode() .. ". /botresources on|off (requires matching server and pfQuest).")
 end

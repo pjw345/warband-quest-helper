@@ -1,4 +1,4 @@
-Warband Quest Helper 1.1.0
+Warband Quest Helper 1.1.1
 ==========================
 
 A small Turtle WoW / Vanilla addon designed to be used alongside Warband.
@@ -35,7 +35,9 @@ a raid. For quest-giver actions, stand near the NPC and target it first. For
 selling, stand near and interact with a suitable vendor first if the bot build
 requires the vendor interaction.
 
-Resources button cycles Ore + Herbs / Ore / Herbs / Off.
-/wqh resources both|ore|herbs|off and /botresources provide the same setting.
+Resources button cycles On / Off.
+/wqh resources on|off and /botresources provide the same setting.
 Requires pfQuest and the matching server resource feed. Icons do not start gathering.
 The separate Bot Resource Icons addon should be removed/disabled when using this version.
+
+On shows every supported resource type available from current harvesting skills; no per-type selection is required.

@@ -60,8 +60,8 @@ receive("S:1:3:Alon:38:2:2:"..herb)
 assert(M.snapshots.Alon.rows[1].guid=="17370383791809394007", "partial replacement preserves previous snapshot")
 receive("S:1:3:Alon:38:1:2:"..row)
 assert(table.getn(M.snapshots.Alon.rows)==2, "out of order pages assembled atomically")
-WarbandQuestHelperDB.resourceMarkers="ore"; assert(table.getn(M.VisibleNodes(38))==1)
-WarbandQuestHelperDB.resourceMarkers="herbs"; assert(table.getn(M.VisibleNodes(38))==1)
+WarbandQuestHelperDB.resourceMarkers="ore"; assert(M.Mode()=="on" and table.getn(M.VisibleNodes(38))==2)
+WarbandQuestHelperDB.resourceMarkers="herbs"; assert(M.Mode()=="on" and table.getn(M.VisibleNodes(38))==2)
 WarbandQuestHelperDB.resourceMarkers="both"
 local original = M.snapshots.Alon
 for _, body in ipairs({ "S:1:2:Alon:38:1:1:"..row,
@@ -78,10 +78,10 @@ roster={"Alon"}; assert(table.getn(M.VisibleNodes(38))==0, "departed bot loses i
 roster={"Alon","Mercy"}; now=23; assert(table.getn(M.VisibleNodes(38))==0, "stale data expires")
 WarbandQuestHelperDB.resourceMarkers="off"; M.Poll(); assert(not next(M.snapshots) and not next(M.wanted))
 WarbandQuestHelperDB.resourceMarkers="both"; pfMap=nil; M.Poll(); assert(not next(M.wanted), "no requests without rendering support")
-WarbandQuestHelperDB.resourceMarkers = {}; assert(M.Mode()=="both", "invalid saved setting uses safe default")
+WarbandQuestHelperDB.resourceMarkers = {}; assert(M.Mode()=="on", "invalid saved setting uses safe default")
 print("PASS: Lua 5.0 resource protocol, roster, TTL, depletion, filters, rendering and map-view isolation")
 
 WarbandQuestHelperDB = { x = 123, hidden = true }
-assert(M.SetMode("ore") and M.Mode()=="ore")
+assert(M.SetMode("on") and M.Mode()=="on")
 assert(WarbandQuestHelperDB.x==123 and WarbandQuestHelperDB.hidden, "resource modes preserve panel settings")
-assert(not M.SetMode("invalid") and M.Mode()=="ore")
+assert(not M.SetMode("invalid") and M.Mode()=="on")

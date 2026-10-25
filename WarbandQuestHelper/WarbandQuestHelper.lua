@@ -3,7 +3,7 @@
 -- PlayerBots party commands used alongside the Warband addon.
 
 local ADDON_NAME = "Warband Quest Helper"
-local VERSION = "1.1.0"
+local VERSION = "1.1.1"
 local PANEL_WIDTH = 246
 local PANEL_HEIGHT = 123
 
@@ -156,8 +156,8 @@ CreateCommandButton(
 
 -- Resource display is independent of bot gathering and the quest buttons.
 local resources = WarbandQuestHelperResources
-local resourceLabels = { both = "Ore + Herbs", ore = "Ore", herbs = "Herbs", off = "Off" }
-local resourceNext = { both = "ore", ore = "herbs", herbs = "off", off = "both" }
+local resourceLabels = { on = "On", off = "Off" }
+local resourceNext = { on = "off", off = "on" }
 local resourceButton = CreateFrame("Button", "WarbandQuestHelperResourcesButton", frame, "UIPanelButtonTemplate")
 resourceButton:SetPoint("TOPLEFT", frame, "TOPLEFT", 12, -88)
 resourceButton:SetWidth(222)
@@ -172,7 +172,7 @@ end)
 resourceButton:SetScript("OnEnter", function()
     GameTooltip:SetOwner(this, "ANCHOR_TOP")
     GameTooltip:SetText("Group resource icons")
-    GameTooltip:AddLine("Click to cycle Ore + Herbs, Ore, Herbs and Off. Uses your bots' professions and skills. Requires pfQuest.", 1, 1, 1, true)
+    GameTooltip:AddLine("Click to turn resource icons on or off. On shows all resource types covered by available harvesting skills. Requires pfQuest.", 1, 1, 1, true)
     GameTooltip:Show()
 end)
 resourceButton:SetScript("OnLeave", function() GameTooltip:Hide() end)
@@ -229,7 +229,7 @@ SlashCmdList["WARBANDQUESTHELPER"] = function(message)
     local _, _, resourceMode = string.find(message, "^resources%s+(%a+)$")
     if resourceMode then
         if not resources.SetMode(resourceMode) then
-            PrintMessage("Use /wqh resources both, ore, herbs or off.")
+            PrintMessage("Use /wqh resources on or off.")
         end
         return
     end
