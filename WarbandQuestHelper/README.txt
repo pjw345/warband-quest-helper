@@ -1,8 +1,8 @@
-Warband Quest Helper 1.0.0
+Warband Quest Helper 1.1.0
 ==========================
 
 A small Turtle WoW / Vanilla addon designed to be used alongside Warband.
-It contains no MangosBot roster, controls, quest polling or debug messages.
+It adds compact commands and profession-based minimap resource icons alongside Warband.
 
 Installation
 ------------
@@ -34,3 +34,8 @@ The addon automatically uses raid chat instead of party chat when you are in
 a raid. For quest-giver actions, stand near the NPC and target it first. For
 selling, stand near and interact with a suitable vendor first if the bot build
 requires the vendor interaction.
+
+Resources button cycles Ore + Herbs / Ore / Herbs / Off.
+/wqh resources both|ore|herbs|off and /botresources provide the same setting.
+Requires pfQuest and the matching server resource feed. Icons do not start gathering.
+The separate Bot Resource Icons addon should be removed/disabled when using this version.

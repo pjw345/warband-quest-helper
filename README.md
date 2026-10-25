@@ -36,3 +36,21 @@ Do not commit the client's `WTF` directory, SavedVariables, logs or account info
 ## License
 
 MIT; see [LICENSE](LICENSE).
+
+## Group resource minimap icons (1.1.0)
+
+The helper now includes ore/herb icons from your controlled bots' professions and
+trained skill. The **Resources** button cycles Ore + Herbs, Ore, Herbs, Off. The
+same setting is available through `/wqh resources both|ore|herbs|off` and
+`/botresources both|ore|herbs|off`. Settings share WarbandQuestHelperDB without
+changing saved panel position or visibility. Hiding the panel leaves icons active;
+choose Off to stop icon polling. Icons do not trigger gathering.
+
+Requires installed pfQuest and matching server RESBOT support (tortoise-wow PR74,
+deployed in c6a892a8). Nodes deduplicate across bots, clear after depletion/roster
+or zone changes and expire if updates stop. Unknown map coordinates hide icons.
+This replaces the separate Bot Resource Icons addon; do not enable that package
+alongside this version. Neither Warband itself nor its roster interface is changed.
+
+Restart the client after the manifest update. Lua5.0 tests use a fake WoW UI;
+actual game rendering and interaction require separate acceptance.
