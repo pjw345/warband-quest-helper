@@ -21,7 +21,7 @@ The addon is Lua source loaded by the client; no build or server deployment is n
 | Turn In | `do talk to quest giver` |
 | Equip | `do equip upgrades` |
 | Use Object | `u go` |
-| Sell Junk | `s vendor` |
+| Sell Junk | `s gray` |
 
 For quest actions, stand near and target the quest giver. For selling, stand near and interact with the vendor if required by your server. Commands use ordinary group chat, selecting raid chat when in a raid. The panel reports when you are not grouped.
 
@@ -36,3 +36,23 @@ Do not commit the client's `WTF` directory, SavedVariables, logs or account info
 ## License
 
 MIT; see [LICENSE](LICENSE).
+
+## Group resource minimap icons (1.1.1)
+
+The helper now includes ore/herb icons from your controlled bots' professions and
+trained skill. The **Resources** button cycles On and Off. The
+same setting is available through `/wqh resources on|off` and
+`/botresources on|off`. Settings share WarbandQuestHelperDB without
+changing saved panel position or visibility. Hiding the panel leaves icons active;
+choose Off to stop icon polling. Icons do not trigger gathering.
+
+Requires installed pfQuest and matching server RESBOT support (tortoise-wow PR74,
+deployed in c6a892a8). Nodes deduplicate across bots, clear after depletion/roster
+or zone changes and expire if updates stop. Unknown map coordinates hide icons.
+This replaces the separate Bot Resource Icons addon; do not enable that package
+alongside this version. Neither Warband itself nor its roster interface is changed.
+
+Restart the client after the manifest update. Lua5.0 tests use a fake WoW UI;
+actual game rendering and interaction require separate acceptance.
+
+On shows every supported resource type available from current harvesting skills; no per-type selection is required.
