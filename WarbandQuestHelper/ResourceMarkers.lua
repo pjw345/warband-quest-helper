@@ -4,7 +4,10 @@ WarbandQuestHelperResources = { snapshots = {}, pending = {}, pins = {}, wanted 
 local M = WarbandQuestHelperResources
 local token, nextPoll, nextDraw = math.mod(math.floor(GetTime() * 1000), 1000000000) + 1, 0, 0
 local signature = ""
-local textures = { O = "Interface\\Icons\\INV_Ore_Copper_01", H = "Interface\\Icons\\INV_Misc_Herb_01" }
+local resourceKinds = { O = true, H = true }
+-- The client's own resource-tracking sprite (first cell in its 4x4 atlas).
+-- Referencing the native path preserves the active client MPQ's appearance.
+local dotTexture = "Interface\\Minimap\\ObjectIcons"
 
 local function Split(text, delimiter)
   local result, start = {}, 1
@@ -30,9 +33,30 @@ function M.Mode()
   if mode == "off" then return "off" end
   return "on" -- Migrate all previous enabled modes to the combined display.
 end
+function M.ResourceName(row)
+  local name = pfDB and pfDB.objects and pfDB.objects.loc and pfDB.objects.loc[row.entry]
+  if type(name) == "string" and name ~= "" then return name end
+  return (row.kind == "O" and "Ore" or "Herb") .. " (object " .. row.entry .. ")"
+end
+function M.HideTooltip(pin)
+  if M.hovered ~= pin then return end
+  M.hovered = nil
+  if GameTooltip and type(GameTooltip.IsOwned) == "function" and GameTooltip:IsOwned(pin) then GameTooltip:Hide() end
+end
+function M.ShowTooltip(pin)
+  if not pin.row or not GameTooltip then return end
+  GameTooltip:SetOwner(pin, "ANCHOR_TOP")
+  GameTooltip:SetText(M.ResourceName(pin.row), 1, 1, 1)
+  GameTooltip:Show()
+end
+function M.HidePins()
+  for _, pin in ipairs(M.pins) do
+    M.HideTooltip(pin); pin.row = nil; pin:Hide()
+  end
+end
 function M.Clear()
   M.snapshots, M.pending, M.wanted = {}, {}, {}
-  for _, pin in ipairs(M.pins) do pin:Hide() end
+  M.HidePins()
 end
 function M.Roster()
   local roster, names = {}, {}
@@ -56,7 +80,7 @@ function M.Receive(prefix, body, channel, sender)
   local part, total, zone = Integer(f[6], 16), Integer(f[7], 16), Integer(f[5], 4294967295)
   local roster = M.Roster()
   if not part or not total or part < 1 or total < 1 or part > total or not zone or
-      not roster[f[4]] or M.wanted[f[4]] ~= f[3] then return end
+      (f[4] ~= UnitName("player") and not roster[f[4]]) or M.wanted[f[4]] ~= f[3] then return end
   local p = M.pending[f[4]]
   if not p then p = { token = f[3], zone = zone, total = total, parts = {} }; M.pending[f[4]] = p end
   if p.token ~= f[3] or p.zone ~= zone or p.total ~= total then return end
@@ -73,7 +97,7 @@ function M.Receive(prefix, body, channel, sender)
         local entry, x, y = Integer(row[2], 4294967295), Coordinate(row[4]), Coordinate(row[5])
         -- GUIDs stay strings: their 64 bits do not fit a Lua number exactly.
         if table.getn(row) ~= 5 or not string.find(row[1], "^%d+$") or string.len(row[1]) > 20 or
-            seen[row[1]] or not entry or entry == 0 or not textures[row[3]] or not x or not y then
+            seen[row[1]] or not entry or entry == 0 or not resourceKinds[row[3]] or not x or not y then
           M.pending[f[4]] = nil; return
         end
         seen[row[1]] = true
@@ -92,18 +116,21 @@ function M.Poll()
   if M.Mode() == "off" or not M.Available() then M.Clear(); return end
   local roster, current = M.Roster()
   if current ~= signature then M.Clear(); signature = current end
-  if current == "" then return end
   token = math.mod(token, 4294967294) + 1
   local text = tostring(token)
   M.pending, M.wanted = {}, {}
-  for name in pairs(roster) do M.wanted[name] = text end
-  SendAddonMessage("RESBOT", "R:1:" .. text .. ":both", GetNumRaidMembers() > 0 and "RAID" or "PARTY")
+  M.wanted[UnitName("player")] = text
+  SendAddonMessage("RESSELF", "R:1:" .. text .. ":both", "GUILD")
+  if current ~= "" then
+    for name in pairs(roster) do M.wanted[name] = text end
+    SendAddonMessage("RESBOT", "R:1:" .. text .. ":both", GetNumRaidMembers() > 0 and "RAID" or "PARTY")
+  end
 end
 function M.VisibleNodes(zone)
   local result, seen = {}, {}
   local roster = M.Roster()
   for name, snapshot in pairs(M.snapshots) do
-    if not roster[name] or snapshot.expires <= GetTime() then M.snapshots[name] = nil
+    if (name ~= UnitName("player") and not roster[name]) or snapshot.expires <= GetTime() then M.snapshots[name] = nil
     elseif snapshot.zone == zone then
       for _, row in ipairs(snapshot.rows) do
         if not seen[row.guid] then
@@ -115,24 +142,23 @@ function M.VisibleNodes(zone)
   return result
 end
 function M.Draw()
-  for _, pin in ipairs(M.pins) do pin:Hide() end
-  if M.Mode() == "off" or not M.Available() then return end
+  if M.Mode() == "off" or not M.Available() then M.HidePins(); return end
   local x, y = GetPlayerMapPosition("player")
-  if not x or not y or x == 0 and y == 0 then return end -- Unsupported instance coordinates.
+  if not x or not y or x == 0 and y == 0 then M.HidePins(); return end -- Unsupported instance coordinates.
   local zone = pfMap:GetMapIDByName(GetRealZoneText())
   -- The map API uses the map currently selected by the player. Do not move
   -- that selection or draw with coordinates from another world-map view.
-  if not pfMap.GetMapID or pfMap:GetMapID() ~= zone then return end
+  if not pfMap.GetMapID or pfMap:GetMapID() ~= zone then M.HidePins(); return end
   local size = zone and pfMap.minimap_sizes[zone]
   local zoom = pfMap.minimap_zoom[pfMap.minimap_indoor()]
   local radius = zoom and zoom[Minimap:GetZoom()]
-  if not size or not radius or size[1] <= 0 or size[2] <= 0 then return end
+  if not size or not radius or size[1] <= 0 or size[2] <= 0 then M.HidePins(); return end
   local count = 0
   for _, row in ipairs(M.VisibleNodes(zone)) do
     local dx = (row.x / 100 - x) * size[1] / radius * Minimap:GetWidth()
     local dy = (y - row.y / 100) * size[2] / radius * Minimap:GetHeight()
     if pfQuestCompat.rotateMinimap then
-      if not pfQuestCompat.GetPlayerFacing then return end
+      if not pfQuestCompat.GetPlayerFacing then M.HidePins(); return end
       local facing = pfQuestCompat.GetPlayerFacing()
       dx, dy = dx * math.cos(facing) + dy * math.sin(facing), -dx * math.sin(facing) + dy * math.cos(facing)
     end
@@ -140,15 +166,34 @@ function M.Draw()
       count = count + 1
       if not M.pins[count] then
         local pin = CreateFrame("Frame", nil, Minimap)
-        pin:SetWidth(14); pin:SetHeight(14); pin:SetFrameLevel(Minimap:GetFrameLevel() + 5)
-        pin.texture = pin:CreateTexture(nil, "ARTWORK"); pin.texture:SetAllPoints(pin)
-        -- Non-interactive frames preserve minimap clicks and cannot trigger gathering.
+        pin:SetWidth(10); pin:SetHeight(10); pin:SetFrameLevel(Minimap:GetFrameLevel() + 5)
+        pin.texture = pin:CreateTexture(nil, "ARTWORK")
+        pin.texture:SetWidth(8); pin.texture:SetHeight(8); pin.texture:SetPoint("CENTER", pin, "CENTER", 0, 0)
+        pin.texture:SetTexture(dotTexture); pin.texture:SetTexCoord(0, 0.25, 0, 0.25)
+        pin.texture:SetVertexColor(1, 1, 1, 1) -- Preserve native artwork colours; do not tint a generic dot.
+        pin:EnableMouse(true)
+        pin:SetScript("OnEnter", function() M.hovered = this; M.ShowTooltip(this) end)
+        pin:SetScript("OnLeave", function() M.HideTooltip(this) end)
+        pin:SetScript("OnHide", function() M.HideTooltip(this) end)
+        -- Hovering identifies the node. A manual map click keeps its normal
+        -- minimap behavior; it never sends a bot gathering/use command.
+        pin:SetScript("OnMouseUp", function()
+          local handler = Minimap:GetScript("OnMouseUp")
+          if handler then
+            local previous = this; this = Minimap; handler(Minimap, arg1); this = previous
+          end
+        end)
         M.pins[count] = pin
       end
       local pin = M.pins[count]
-      pin.texture:SetTexture(textures[row.kind]); pin:ClearAllPoints()
+      local changed = not pin.row or pin.row.guid ~= row.guid or pin.row.entry ~= row.entry
+      pin.row = row; pin:ClearAllPoints()
       pin:SetPoint("CENTER", Minimap, "CENTER", dx, dy); pin:Show()
+      if M.hovered == pin and changed then M.ShowTooltip(pin) end
     end
+  end
+  for i = count + 1, table.getn(M.pins) do
+    local pin = M.pins[i]; M.HideTooltip(pin); pin.row = nil; pin:Hide()
   end
 end
 function M.SetMode(mode)

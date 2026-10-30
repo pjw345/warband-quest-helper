@@ -1,4 +1,4 @@
-Warband Quest Helper 1.1.1
+Warband Quest Helper 1.2.0
 ==========================
 
 A small Turtle WoW / Vanilla addon designed to be used alongside Warband.
@@ -41,3 +41,32 @@ Requires pfQuest and the matching server resource feed. Icons do not start gathe
 The separate Bot Resource Icons addon should be removed/disabled when using this version.
 
 On shows every supported resource type available from current harvesting skills; no per-type selection is required.
+
+The 1.2.0 feed includes your own trained Mining/Herbalism as well as controlled
+group bots. With Resources On, both supported resource types appear whenever
+any contributor has enough skill. Your own snapshot also works solo/unguilded.
+This requires matching RESSELF server support; install the 1.2.0 package together
+with that server build. The currently deployed c6a892a8 supports only bot snapshots;
+the compatible 1.1.1 On/Off package can be used until that next build.
+
+### Yellow resource dots (1.2.1)
+
+Minimap resources use small yellow dots. Hover a dot to see the localized object
+name from the installed pfQuest/Turtle database, such as Copper Vein or Silverleaf.
+An unknown object shows its resource category and object ID rather than inventing
+a name. Native minimap clicks still work; dots do not command bots to gather.
+Hovered markers stay stable during redraws and tooltip cleanup follows node
+depletion, expiry, zoning and Resources Off. No server rebuild is required.
+
+### Standard WoW resource blip (1.2.2)
+
+Markers use the built-in Interface/Minimap/ObjectIcons resource-tracking sprite,
+cropped to the first atlas cell, with its original colours/border. This replaces
+the generic pfQuest node tinted yellow. The active client MPQ supplies the exact
+artwork. The helper still provides the shared profession feed and named hover;
+this does not activate native tracking spells or modify player tracking state.
+
+Tooltip ownership compatibility (1.2.3): use the Vanilla GameTooltip:IsOwned
+method instead of GetOwner. The Lua5.0 fixture deliberately omits GetOwner,
+reproduces the original error, and covers clearing owned versus unrelated
+tooltips with the supported method. No server change is needed.
